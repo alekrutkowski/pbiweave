@@ -1,0 +1,10 @@
+{
+  "rows": 100000,
+  "columns": 5,
+  "elapsed_seconds": 1.829,
+  "project_bytes": 1077662,
+  "zip_bytes": 696907,
+  "R": "4.3.3",
+  "platform": "x86_64 Linux",
+  "scope": "R compiler and ZIP only; no Power BI refresh or rendering"
+}

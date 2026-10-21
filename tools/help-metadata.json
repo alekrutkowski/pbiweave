@@ -1,0 +1,198 @@
+{
+  "pbi_dashboard": {
+    "title": "Start a declarative report specification",
+    "example": "d <- pbi_dashboard(\"Revenue\", pbi_demo_data(), table = \"Sales\") %>%\n  pbi_page(\"Overview\", pbi_card(\"revenue\"), pbi_bar(\"region\", \"cost\"))\npbi_validate(d)$valid"
+  },
+  "pbi_data": {
+    "title": "Embed another data frame in the model",
+    "example": "sales <- pbi_demo_data()\nregions <- data.frame(region = unique(sales$region), area = c(\"A\", \"B\", \"C\"))\nd <- pbi_dashboard(\"Regions\", sales, table = \"Sales\") %>%\n  pbi_data(\"Regions\", regions) %>%\n  pbi_relationship(\"Sales\", \"region\", \"Regions\", \"region\")\nlength(d$tables)"
+  },
+  "pbi_prepare": {
+    "title": "Run a build-time R transformation on a private copy",
+    "example": "sales <- pbi_demo_data()\nprepared <- pbi_prepare(sales, function(d) {\n  d[, profit_per_unit := (revenue - cost) / units]\n  d\n})\nstopifnot(!\"profit_per_unit\" %in% names(sales))\nhead(prepared)"
+  },
+  "pbi_column": {
+    "title": "Describe a column for the semantic model",
+    "example": "d <- pbi_dashboard(\"Typed model\", pbi_demo_data()) %>%\n  pbi_column(\"revenue\", type = \"decimal\", format = \"$#,0.00\") %>%\n  pbi_column(\"product\", summarize = \"none\")\nd$tables$data$columns$revenue$format"
+  },
+  "pbi_field": {
+    "title": "Refer to a model column without writing DAX",
+    "example": "f <- pbi_field(\"revenue\", table = \"Sales\", aggregate = \"average\",\n               label = \"Mean revenue\", format = \"$#,0.00\")\nv <- pbi_bar(\"region\", f, table = \"Sales\")\nprint(v)"
+  },
+  "pbi_ref": {
+    "title": "Refer to an explicitly defined model measure",
+    "example": "d <- pbi_dashboard(\"Revenue\", pbi_demo_data()) %>%\n  pbi_measure(\"Total revenue\", column = \"revenue\") %>%\n  pbi_page(\"Summary\", pbi_card(pbi_ref(\"Total revenue\")))\npbi_validate(d)$valid"
+  },
+  "pbi_aggregate": {
+    "title": "Choose the selection-time summary for a column",
+    "example": "d <- pbi_dashboard(\"Mean transaction\", pbi_demo_data()) %>%\n  pbi_page(\"Explore\", pbi_bar(\"region\",\n    pbi_aggregate(\"revenue\", \"average\", format = \"$#,0.00\")))\npbi_validate(d)$valid"
+  },
+  "pbi_measure": {
+    "title": "Define an optional DAX measure",
+    "example": "d <- pbi_dashboard(\"Profit\", pbi_demo_data(), table = \"Sales\") %>%\n  pbi_measure(\"Revenue total\", column = \"revenue\", format = \"$#,0\") %>%\n  pbi_measure(\"Cost total\", column = \"cost\", format = \"$#,0\") %>%\n  pbi_measure(\"Profit total\", \"[Revenue total] - [Cost total]\", format = \"$#,0\") %>%\n  pbi_page(\"Summary\", pbi_card(pbi_ref(\"Profit total\")))\npbi_validate(d)$valid"
+  },
+  "pbi_ratio": {
+    "title": "Combine R-precomputed sufficient statistics correctly",
+    "example": "cells <- data.frame(group = c(\"small\", \"large\"),\n                    value_sum = c(0, 1000), observed = c(2L, 100L))\nd <- pbi_dashboard(\"Weighted mean\", cells) %>%\n  pbi_ratio(\"Mean value\", \"value_sum\", \"observed\", format = \"0.00\") %>%\n  pbi_page(\"Summary\", pbi_card(pbi_ref(\"Mean value\")))\n# The unfiltered result should be 1000 / 102, not mean(c(0, 10)).\npbi_validate(d)$valid"
+  },
+  "pbi_relationship": {
+    "title": "Connect a fact table to a unique dimension key",
+    "example": "sales <- pbi_demo_data()\nregions <- data.frame(region = unique(sales$region),\n                      manager = c(\"Alex\", \"Sam\", \"Robin\"))\nd <- pbi_dashboard(\"Team sales\", sales, table = \"Sales\") %>%\n  pbi_data(regions, \"Regions\") %>%\n  pbi_relationship(\"Sales\", \"region\", \"Regions\", \"region\") %>%\n  pbi_page(\"Teams\", pbi_bar(pbi_field(\"manager\", \"Regions\"), \"revenue\"))\npbi_validate(d)$valid"
+  },
+  "pbi_calendar": {
+    "title": "Build a contiguous calendar in R",
+    "example": "d <- pbi_dashboard(\"Calendar\", pbi_demo_data(), table = \"Sales\") %>%\n  pbi_calendar(\"date\", table = \"Sales\") %>%\n  pbi_page(\"Monthly\", pbi_slicer(\"Year\", table = \"Calendar\"),\n           pbi_bar(pbi_field(\"MonthName\", \"Calendar\"), \"revenue\"))\npbi_validate(d)$valid"
+  },
+  "pbi_theme": {
+    "title": "Choose coordinated colors and typography",
+    "example": "theme <- pbi_theme(\"midnight\", text_size = 13)\nd <- pbi_dashboard(\"Dark report\", pbi_demo_data(), theme = theme) %>%\n  pbi_page(\"Overview\", pbi_bar(\"region\", \"revenue\"))\npbi_validate(d)$valid"
+  },
+  "pbi_layout": {
+    "title": "Declare how visuals occupy a fixed report canvas",
+    "example": "d <- pbi_dashboard(\"Grid\", pbi_demo_data()) %>%\n  pbi_page(\"Overview\", pbi_card(\"revenue\"), pbi_card(\"cost\"),\n           pbi_span(pbi_line(\"date\", \"revenue\"), columns = 2),\n           layout = pbi_layout(\"grid\", columns = 2, gap = 20))\npbi_validate(d)$valid"
+  },
+  "pbi_page": {
+    "title": "Add a page of native visuals",
+    "example": "d <- pbi_dashboard(\"Sales\", pbi_demo_data()) %>%\n  pbi_page(\"Summary\", pbi_card(\"revenue\"), pbi_bar(\"product\", \"cost\")) %>%\n  pbi_page(\"Detail\", pbi_table(c(\"date\", \"region\", \"revenue\")))\nlength(d$pages)"
+  },
+  "pbi_span": {
+    "title": "Give a visual more grid cells",
+    "example": "d <- pbi_dashboard(\"Spans\", pbi_demo_data()) %>%\n  pbi_page(\"Overview\", pbi_span(pbi_line(\"date\", \"revenue\"), columns = 2),\n           pbi_card(\"revenue\"), pbi_card(\"cost\"),\n           layout = pbi_layout(columns = 2))\npbi_validate(d)$valid"
+  },
+  "pbi_place": {
+    "title": "Place a visual precisely on a free-layout page",
+    "example": "d <- pbi_dashboard(\"Custom composition\", pbi_demo_data()) %>%\n  pbi_page(\"Overview\", pbi_place(pbi_card(\"revenue\"), 24, 90, 280, 160),\n           pbi_place(pbi_bar(\"product\", \"cost\"), 328, 90, 900, 560),\n           layout = pbi_layout(\"free\"))\npbi_validate(d)$valid"
+  },
+  "pbi_sort": {
+    "title": "Set a visual query's sort order",
+    "example": "v <- pbi_bar(\"product\", \"revenue\") %>%\n  pbi_sort(\"revenue\", descending = TRUE)\nd <- pbi_dashboard(\"Ranked products\", pbi_demo_data()) %>%\n  pbi_page(\"Rank\", v)\npbi_validate(d)$valid"
+  },
+  "pbi_filter": {
+    "title": "Apply a static include or exclude filter at a chosen scope",
+    "example": "keep_east <- pbi_filter(\"region\", \"East\")\nd <- pbi_dashboard(\"Scoped filters\", pbi_demo_data()) %>%\n  pbi_filters(keep_east) %>%\n  pbi_page(\"Overview\", pbi_bar(\"product\", \"revenue\"),\n           pbi_card(\"cost\") %>% pbi_filter(\"product\", \"Atlas\"))\npbi_validate(d)$valid"
+  },
+  "pbi_input": {
+    "title": "Declare a Shiny-style input ID backed by a native slicer",
+    "example": "d <- pbi_dashboard(\"Input example\", pbi_demo_data()) %>%\n  pbi_screen(\"Explore\", pbi_input(\"region\", \"region\", label = \"Region\"),\n             pbi_output(\"sales\", pbi_card(\"revenue\"))) %>%\n  pbi_bind(\"region\", \"sales\")\npbi_flow(d)"
+  },
+  "pbi_output": {
+    "title": "Give a native visual a stable output ID",
+    "example": "v <- pbi_output(\"trend\", pbi_line(\"date\", \"revenue\", title = \"Revenue trend\"))\nprint(v)"
+  },
+  "pbi_screen": {
+    "title": "Add an explicitly wired, Shiny-style screen",
+    "example": "d <- pbi_dashboard(\"Screen\", pbi_demo_data()) %>%\n  pbi_screen(\"Explore\", pbi_input(\"product\", \"product\"),\n    pbi_output(\"revenue\", pbi_card(\"revenue\")),\n    pbi_output(\"trend\", pbi_line(\"date\", \"revenue\"))) %>%\n  pbi_bind(\"product\", c(\"revenue\", \"trend\"))\npbi_flow(d)"
+  },
+  "pbi_bind": {
+    "title": "Declare which visual selections affect which outputs",
+    "example": "d <- pbi_example(\"shiny\") %>%\n  pbi_bind(\"region\", \"trend\", mode = \"none\")\npbi_flow(d, include_disabled = TRUE)"
+  },
+  "pbi_flow": {
+    "title": "Inspect declared visual-interaction dependencies",
+    "example": "d <- pbi_example(\"shiny\")\npbi_flow(d)\npbi_flow(d, page = \"Explore\", include_disabled = TRUE)"
+  },
+  "pbi_validate": {
+    "title": "Preflight a report specification before writing files",
+    "example": "d <- pbi_example(\"showcase\")\ncheck <- pbi_validate(d)\ncheck\ncheck$valid\npbi_inspect(d)$tables"
+  },
+  "pbi_compile": {
+    "title": "Compile a portable project using TMDL by default",
+    "example": "d <- pbi_example(\"quickstart\")\np <- pbi_compile(d, tempfile(\"pbiweave-example-\"))\np$model_format\npbi_check(p)$valid\n# For legacy output, use model_format = \"tmsl\" in a different directory.\nunlink(p$path, recursive = TRUE)"
+  },
+  "pbi_check": {
+    "title": "Inspect a generated project without claiming it is refreshed",
+    "example": "p <- pbi_compile(pbi_example(\"quickstart\"), tempfile(\"check-\"))\nc <- pbi_check(p, verify_hashes = TRUE)\nstopifnot(c$valid, is.na(c$data_loaded), !c$runtime_checked)\nunlink(p$path, recursive = TRUE)"
+  },
+  "pbi_open": {
+    "title": "Open the project and print the mandatory first-refresh instructions",
+    "example": "p <- pbi_compile(pbi_example(\"quickstart\"), tempfile(\"open-\"))\nif (interactive() && .Platform$OS.type == \"windows\") {\n  pbi_open(p)\n} else {\n  unlink(p$path, recursive = TRUE)\n}\n# In Desktop: Home -> Refresh, inspect, then Save As .pbix."
+  },
+  "pbi_demo_data": {
+    "title": "Create deterministic demonstration data without changing the RNG",
+    "example": "d <- pbi_demo_data()\nhead(d)\nd[, .(revenue = sum(revenue), profit = sum(revenue - cost), units = sum(units))]"
+  },
+  "pbi_example": {
+    "title": "Construct one of the teaching report specifications",
+    "example": "d <- pbi_example(\"showcase\", theme = \"midnight\")\npbi_validate(d)$valid\nprint(pbi_example(1))"
+  },
+  "pbi_bar": {
+    "title": "Compare categories with a bar or column chart",
+    "example": "v <- pbi_bar(\"region\", \"revenue\", series = \"product\", stacked = TRUE, title = \"Revenue mix\")\nd <- pbi_dashboard(\"Visual example\", pbi_demo_data()) %>%\n  pbi_page(\"Example\", v)\npbi_validate(d)$valid"
+  },
+  "pbi_line": {
+    "title": "Show a trend or ordered comparison",
+    "example": "v <- pbi_line(\"date\", \"revenue\", series = \"region\", title = \"Monthly revenue\")\nd <- pbi_dashboard(\"Visual example\", pbi_demo_data()) %>%\n  pbi_page(\"Example\", v)\npbi_validate(d)$valid"
+  },
+  "pbi_area": {
+    "title": "Show a filled trend",
+    "example": "v <- pbi_area(\"date\", \"revenue\", series = \"region\", stacked = TRUE, title = \"Revenue composition\")\nd <- pbi_dashboard(\"Visual example\", pbi_demo_data()) %>%\n  pbi_page(\"Example\", v)\npbi_validate(d)$valid"
+  },
+  "pbi_scatter": {
+    "title": "Compare observations or aggregates in two dimensions",
+    "example": "sales <- pbi_demo_data() %>% pbi_prepare(function(d) d[, row_id := seq_len(.N)])\nd <- pbi_dashboard(\"Scatter\", sales) %>%\n  pbi_page(\"Compare\", pbi_scatter(\"units\", \"revenue\", size = \"cost\", details = \"row_id\",\n                                 legend = \"region\", title = \"Monthly observations\"))\npbi_validate(d)$valid"
+  },
+  "pbi_pie": {
+    "title": "Show a small categorical composition",
+    "example": "v <- pbi_pie(\"region\", \"revenue\", title = \"Revenue by region\")\nd <- pbi_dashboard(\"Visual example\", pbi_demo_data()) %>%\n  pbi_page(\"Example\", v)\npbi_validate(d)$valid"
+  },
+  "pbi_donut": {
+    "title": "Show a compact part-to-whole composition",
+    "example": "v <- pbi_donut(\"region\", \"revenue\", title = \"Regional composition\")\nd <- pbi_dashboard(\"Visual example\", pbi_demo_data()) %>%\n  pbi_page(\"Example\", v)\npbi_validate(d)$valid"
+  },
+  "pbi_treemap": {
+    "title": "Show a hierarchical area composition",
+    "example": "v <- pbi_treemap(\"region\", \"revenue\", group = \"product\", title = \"Regional product mix\")\nd <- pbi_dashboard(\"Visual example\", pbi_demo_data()) %>%\n  pbi_page(\"Example\", v)\npbi_validate(d)$valid"
+  },
+  "pbi_funnel": {
+    "title": "Display ordered stages or ranked categories",
+    "example": "v <- pbi_funnel(\"region\", \"units\", title = \"Units by region (not a conversion funnel)\")\nd <- pbi_dashboard(\"Visual example\", pbi_demo_data()) %>%\n  pbi_page(\"Example\", v)\npbi_validate(d)$valid"
+  },
+  "pbi_waterfall": {
+    "title": "Explain additive contributions to a total",
+    "example": "changes <- data.frame(step = c(\"Opening\", \"Growth\", \"Churn\"),\n                      amount = c(100, 25, -10), order = 1:3)\nd <- pbi_dashboard(\"Bridge\") %>%\n  pbi_data(\"Changes\", changes, sort_by = c(step = \"order\")) %>%\n  pbi_page(\"Bridge\", pbi_waterfall(\"step\", \"amount\") %>% pbi_sort(\"step\"))\npbi_validate(d)$valid"
+  },
+  "pbi_card": {
+    "title": "Present one or several selection-dependent values",
+    "example": "d <- pbi_dashboard(\"Summary\", pbi_demo_data()) %>%\n  pbi_page(\"KPIs\", pbi_card(c(\"revenue\", \"cost\"), title = \"Revenue and cost\"))\npbi_validate(d)$valid"
+  },
+  "pbi_gauge": {
+    "title": "Compare a value with a target and bounded scale",
+    "example": "v <- pbi_gauge(\"revenue\", target = 900000, minimum = 0, maximum = 1800000, title = \"Revenue target\")\nd <- pbi_dashboard(\"Visual example\", pbi_demo_data()) %>%\n  pbi_page(\"Example\", v)\npbi_validate(d)$valid"
+  },
+  "pbi_table": {
+    "title": "Show unaggregated detail fields or explicit summaries",
+    "example": "d <- pbi_dashboard(\"Evidence\", pbi_demo_data()) %>%\n  pbi_page(\"Details\", pbi_table(title = \"Visible source columns\"))\npbi_validate(d)$valid"
+  },
+  "pbi_matrix": {
+    "title": "Cross-tabulate values by row and column groups",
+    "example": "v <- pbi_matrix(\"region\", \"revenue\", columns = \"product\", title = \"Revenue cross-tabulation\")\nd <- pbi_dashboard(\"Visual example\", pbi_demo_data()) %>%\n  pbi_page(\"Example\", v)\npbi_validate(d)$valid"
+  },
+  "pbi_slicer": {
+    "title": "Add a viewer-operated filter",
+    "example": "v <- pbi_slicer(\"region\", title = \"Choose regions\", style = \"list\", sync = \"region\")\nd <- pbi_dashboard(\"Visual example\", pbi_demo_data()) %>%\n  pbi_page(\"Example\", v)\npbi_validate(d)$valid"
+  },
+  "pbi_text": {
+    "title": "Add static explanatory text",
+    "example": "d <- pbi_dashboard(\"Explanation\", pbi_demo_data()) %>%\n  pbi_page(\"Notes\", pbi_text(\"Select a region. Data are synthetic.\",\n                           font_size = 15, bold = TRUE, alt = \"Report instructions\"))\npbi_validate(d)$valid"
+  },
+  "pbi_bundle": {
+    "title": "Bundle an existing project without recompiling it",
+    "example": "p <- pbi_compile(pbi_example(\"quickstart\"), tempfile(\"bundle-\"))\nz <- pbi_bundle(p)\nstopifnot(file.exists(z))\nunlink(c(p$path, z), recursive = TRUE)"
+  },
+  "pbi_date_table": {
+    "title": "Add a standalone, richly described calendar dimension",
+    "example": "d <- pbi_dashboard(\"Calendar\", data.frame(day = as.Date(\"2025-01-01\"), value = 1)) %>%\n  pbi_date_table(\"2025-01-01\", \"2025-12-31\") %>%\n  pbi_relationship(\"data\", \"day\", \"Calendar\", \"Date\") %>%\n  pbi_page(\"Months\", pbi_bar(pbi_field(\"MonthName\", \"Calendar\"), \"value\"))\npbi_validate(d)$valid"
+  },
+  "pbi_filters": {
+    "title": "Attach reusable filters to the entire report",
+    "example": "regions <- pbi_filter(\"region\", c(\"East\", \"West\"))\nd <- pbi_dashboard(\"Subset\", pbi_demo_data()) %>%\n  pbi_filters(regions) %>%\n  pbi_page(\"Comparison\", pbi_bar(\"region\", \"revenue\"))\npbi_validate(d)$valid"
+  },
+  "pbi_where": {
+    "title": "Attach reusable filters to one visual",
+    "example": "v <- pbi_card(\"revenue\") %>% pbi_where(pbi_filter(\"region\", \"West\"))\nd <- pbi_dashboard(\"Scoped KPI\", pbi_demo_data()) %>%\n  pbi_page(\"Compare\", v, pbi_card(\"revenue\", title = \"All regions\"))\npbi_validate(d)$valid"
+  },
+  "pbi_inspect": {
+    "title": "Inspect snapshot sizes and report complexity",
+    "example": "report <- pbi_example(\"showcase\")\ninfo <- pbi_inspect(report)\ninfo$tables\ninfo$pages\ninfo$diagnostics"
+  }
+}

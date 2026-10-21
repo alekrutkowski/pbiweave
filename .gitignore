@@ -1,0 +1,8 @@
+.Rhistory
+.RData
+.Rproj.user/
+*.Rcheck/
+*.tar.gz
+examples-output/
+**/.pbi/cache.abf
+**/.pbi/localSettings.json

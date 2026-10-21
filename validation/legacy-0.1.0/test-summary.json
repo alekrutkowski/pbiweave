@@ -1,0 +1,11 @@
+{
+  "test_cases": 37,
+  "expectations": 190,
+  "failures": 0,
+  "errors": 0,
+  "warnings": 0,
+  "skips": 0,
+  "R": "4.3.3",
+  "platform": "x86_64 Linux",
+  "command": "testthat::test_local(\"pbiweave\")"
+}

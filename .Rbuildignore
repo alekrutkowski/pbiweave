@@ -1,0 +1,17 @@
+^\.github$
+^\.git$
+^\.gitignore$
+^LICENSE\.md$
+^CONTRIBUTING\.md$
+^VALIDATION\.md$
+^validation$
+^examples-output$
+^tools$
+^.*\.Rproj$
+^REFERENCE\.md$
+^MIGRATION\.md$
+^CONSOLIDATION\.md$
+^pbiweave-for-shiny-developers\.md$
+^build$
+^\.Rproj\.user$
+^HOTFIX-0\.3\.1\.md$

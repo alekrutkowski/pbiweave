@@ -1,0 +1,29 @@
+Package: pbiweave
+Type: Package
+Title: Declarative Power BI Reports with Embedded Data
+Version: 0.3.1
+Authors@R: person("Alek", "Rutkowski", email = "alek.rutkowski@gmail.com",
+    role = c("aut", "cre"))
+Description: Build portable Power BI projects using a declarative, pipe-friendly
+    interface. Compiles native enhanced report definitions, typed import models
+    with embedded data, DAX measures, relationships, layouts, themes, and filters.
+    Generated projects use documented PBIR reports and TMDL or TMSL models.
+    Includes R-first preparation helpers, explicit interaction bindings, and
+    compatibility with the original declarative interface. Power BI Desktop
+    performs the initial data refresh and final save to a data-bearing PBIX file.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Depends: R (>= 4.1.0)
+Imports:
+    base64enc,
+    data.table,
+    digest,
+    jsonlite,
+    magrittr,
+    stats,
+    zip
+Suggests:
+    bit64,
+    nycflights13,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

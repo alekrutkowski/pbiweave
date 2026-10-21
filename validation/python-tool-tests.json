@@ -1,0 +1,7 @@
+{
+  "scope": "Python development-tool and source-provenance tests only; no R/TOM/Desktop execution",
+  "tests_run": 14,
+  "failures": 0,
+  "errors": 0,
+  "passed": true
+}

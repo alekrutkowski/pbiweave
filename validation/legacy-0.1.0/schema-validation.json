@@ -1,0 +1,162 @@
+[
+  {
+    "project": "examples/filters",
+    "valid": true,
+    "json_files": 19,
+    "schema_validated_files": 17,
+    "pages": 2,
+    "visuals": 8,
+    "errors": [],
+    "scope": "Offline JSON schemas and references; does not execute M/DAX or render in Desktop."
+  },
+  {
+    "project": "examples/focus",
+    "valid": true,
+    "json_files": 15,
+    "schema_validated_files": 13,
+    "pages": 1,
+    "visuals": 5,
+    "errors": [],
+    "scope": "Offline JSON schemas and references; does not execute M/DAX or render in Desktop."
+  },
+  {
+    "project": "examples/free",
+    "valid": true,
+    "json_files": 16,
+    "schema_validated_files": 14,
+    "pages": 1,
+    "visuals": 6,
+    "errors": [],
+    "scope": "Offline JSON schemas and references; does not execute M/DAX or render in Desktop."
+  },
+  {
+    "project": "examples/gallery",
+    "valid": true,
+    "json_files": 15,
+    "schema_validated_files": 13,
+    "pages": 1,
+    "visuals": 5,
+    "errors": [],
+    "scope": "Offline JSON schemas and references; does not execute M/DAX or render in Desktop."
+  },
+  {
+    "project": "examples/grid",
+    "valid": true,
+    "json_files": 16,
+    "schema_validated_files": 14,
+    "pages": 1,
+    "visuals": 6,
+    "errors": [],
+    "scope": "Offline JSON schemas and references; does not execute M/DAX or render in Desktop."
+  },
+  {
+    "project": "examples/measures",
+    "valid": true,
+    "json_files": 15,
+    "schema_validated_files": 13,
+    "pages": 1,
+    "visuals": 5,
+    "errors": [],
+    "scope": "Offline JSON schemas and references; does not execute M/DAX or render in Desktop."
+  },
+  {
+    "project": "examples/quickstart",
+    "valid": true,
+    "json_files": 15,
+    "schema_validated_files": 13,
+    "pages": 1,
+    "visuals": 5,
+    "errors": [],
+    "scope": "Offline JSON schemas and references; does not execute M/DAX or render in Desktop."
+  },
+  {
+    "project": "examples/scatter",
+    "valid": true,
+    "json_files": 13,
+    "schema_validated_files": 11,
+    "pages": 1,
+    "visuals": 3,
+    "errors": [],
+    "scope": "Offline JSON schemas and references; does not execute M/DAX or render in Desktop."
+  },
+  {
+    "project": "examples/showcase",
+    "valid": true,
+    "json_files": 29,
+    "schema_validated_files": 27,
+    "pages": 3,
+    "visuals": 17,
+    "errors": [],
+    "scope": "Offline JSON schemas and references; does not execute M/DAX or render in Desktop."
+  },
+  {
+    "project": "examples/sidebar",
+    "valid": true,
+    "json_files": 15,
+    "schema_validated_files": 13,
+    "pages": 1,
+    "visuals": 5,
+    "errors": [],
+    "scope": "Offline JSON schemas and references; does not execute M/DAX or render in Desktop."
+  },
+  {
+    "project": "examples/star",
+    "valid": true,
+    "json_files": 14,
+    "schema_validated_files": 12,
+    "pages": 1,
+    "visuals": 4,
+    "errors": [],
+    "scope": "Offline JSON schemas and references; does not execute M/DAX or render in Desktop."
+  },
+  {
+    "project": "examples/tables",
+    "valid": true,
+    "json_files": 13,
+    "schema_validated_files": 11,
+    "pages": 1,
+    "visuals": 3,
+    "errors": [],
+    "scope": "Offline JSON schemas and references; does not execute M/DAX or render in Desktop."
+  },
+  {
+    "project": "examples/themes",
+    "valid": true,
+    "json_files": 15,
+    "schema_validated_files": 13,
+    "pages": 1,
+    "visuals": 5,
+    "errors": [],
+    "scope": "Offline JSON schemas and references; does not execute M/DAX or render in Desktop."
+  },
+  {
+    "project": "examples/time",
+    "valid": true,
+    "json_files": 13,
+    "schema_validated_files": 11,
+    "pages": 1,
+    "visuals": 3,
+    "errors": [],
+    "scope": "Offline JSON schemas and references; does not execute M/DAX or render in Desktop."
+  },
+  {
+    "project": "examples/typed",
+    "valid": true,
+    "json_files": 13,
+    "schema_validated_files": 11,
+    "pages": 1,
+    "visuals": 3,
+    "errors": [],
+    "scope": "Offline JSON schemas and references; does not execute M/DAX or render in Desktop."
+  },
+  {
+    "project": "examples/types",
+    "valid": true,
+    "json_files": 15,
+    "schema_validated_files": 13,
+    "pages": 1,
+    "visuals": 5,
+    "errors": [],
+    "scope": "Offline JSON schemas and references; does not execute M/DAX or render in Desktop."
+  }
+]

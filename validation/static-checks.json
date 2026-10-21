@@ -1,0 +1,42 @@
+{
+  "package": "pbiweave",
+  "version": "0.3.1",
+  "checks": {
+    "R_lexical_checks": {
+      "files": 29,
+      "method": "lexical delimiters/string termination only, not R parse or execution"
+    },
+    "exports": {
+      "package_functions": 49,
+      "reexported_pipe": 1,
+      "total": 50
+    },
+    "documentation": {
+      "R_blocks": {
+        "README.md": 32,
+        "REFERENCE.md": 99,
+        "pbiweave-for-shiny-developers.md": 9,
+        "MIGRATION.md": 2
+      },
+      "exports_demonstrated": 50,
+      "cookbook_recipes": 16,
+      "complete_tutorials": 2
+    },
+    "help": {
+      "function_topics": 50,
+      "package_overview": 1
+    },
+    "Python_tools_parse": 5,
+    "text_hygiene": 113,
+    "regression_tests_provided_not_executed": {
+      "test_that_cases": 65,
+      "expectation_call_sites": 319,
+      "R_runtime_executed": false
+    }
+  },
+  "errors": [],
+  "passed": true,
+  "R_runtime_executed": false,
+  "Microsoft_TOM_executed": false,
+  "Power_BI_Desktop_executed": false
+}

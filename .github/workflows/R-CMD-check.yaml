@@ -1,0 +1,71 @@
+name: R package and Power BI schemas
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  R-CMD-check:
+    name: R release (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+    steps:
+      - uses: actions/checkout@v4
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
+      - uses: r-lib/actions/check-r-package@v2
+        with:
+          args: 'c("--no-manual")'
+          error-on: '"warning"'
+
+  generated-projects:
+    name: Examples and pinned Microsoft schemas
+    runs-on: ubuntu-latest
+    env:
+      PBIWEAVE_EXAMPLE_DIR: build/examples
+    steps:
+      - uses: actions/checkout@v4
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+      - uses: r-lib/actions/setup-r-dependencies@v2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Static consistency and validator tests
+        run: |
+          python tools/check-static.py
+          python -m pip install 'jsonschema>=4.18,<5'
+          python tools/test_static.py
+      - name: Install package
+        run: R CMD INSTALL .
+      - name: Execute every pedagogical example
+        run: Rscript tools/run-acceptance.R --flights
+      - name: Install schema validator
+        run: python -m pip install 'jsonschema>=4.18,<5'
+      - name: Check generated PBIP and PBIR files offline
+        run: python tools/validate_project.py build/examples build/tutorials --json > build/schema-validation.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: generated-examples-and-schema-results
+          path: build/
+
+# This workflow checks R behavior and the public JSON schemas. It cannot run
+# the proprietary Power BI Desktop renderer, refresh M, or evaluate DAX.
+# Follow the Desktop acceptance checklist before publishing a release.
