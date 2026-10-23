@@ -51,6 +51,7 @@ def main():
     parser.add_argument('--output', type=Path)
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
+    version = re.search(r'^Version:\s*(\S+)', (root / 'DESCRIPTION').read_text(), re.M).group(1)
     errors, checked = [], {}
     def check(label, func):
         try:
@@ -78,7 +79,10 @@ def main():
     def doc_check():
         counts = {}
         for name in ['README.md', 'REFERENCE.md', 'pbiweave-for-shiny-developers.md', 'MIGRATION.md']:
-            text = (root/name).read_text()
+            path = root / name
+            if not path.is_file():
+                path = root / 'inst' / 'doc' / name
+            text = path.read_text()
             blocks = re.findall(r'```r\n(.*?)```', text, re.S)
             for i, block in enumerate(blocks):
                 lexical_check(block, f'{name} block {i+1}')
@@ -123,7 +127,7 @@ def main():
         'test_that_cases': len(re.findall(r'\btest_that\s*\(', testtext)),
         'expectation_call_sites': len(re.findall(r'\bexpect_\w+\s*\(', testtext)),
         'R_runtime_executed': False}
-    report = {'package': 'pbiweave', 'version': '0.3.1', 'checks': checked, 'errors': errors,
+    report = {'package': 'pbiweave', 'version': version, 'checks': checked, 'errors': errors,
               'passed': not errors, 'R_runtime_executed': False, 'Microsoft_TOM_executed': False, 'Power_BI_Desktop_executed': False}
     output = json.dumps(report, indent=2)
     print(output)

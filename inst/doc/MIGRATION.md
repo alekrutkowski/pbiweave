@@ -1,4 +1,21 @@
-# Migrating to pbiweave 0.3.1
+# Migrating to pbiweave 0.4.0
+
+Version 0.4.0 adds the opt-in `european_commission` theme. Existing presets,
+the default `linen` theme, and existing positional arguments retain their
+behavior. Use `theme = "european_commission"` in `pbi_dashboard()` or
+`pbi_example()` to select it. The new final `title_color` argument of
+`pbi_theme()` lets headings differ from body text; older theme objects without
+this field continue to use their foreground color for headings.
+
+The Commission preset defaults to Arial only when `font` is omitted. Explicit
+font arguments continue to take precedence. See
+[the design guide](EUROPEAN-COMMISSION-THEME.md) for the palette, provenance and
+examples, and [validation evidence](VALIDATION.md) for the checks performed.
+
+## Historical 0.3.1 consolidation guidance
+
+The following notes document migration from the earlier 0.1.0 and 0.2.0 APIs.
+Version numbers in this historical section identify that release.
 
 This consolidation uses the supplied **0.1.0 source as its implementation baseline**, not a reconstruction. It adds the useful 0.2.0 API and documentation, restores the original exports and visual/model safeguards, and keeps the pinned 0.1.0 Microsoft schema profile. See `CONSOLIDATION.md` for the audit-to-code map.
 

@@ -21,7 +21,7 @@ pbi_dashboard <- function(title, data = NULL, table = "data", theme = "linen", l
   if (!inherits(theme, "pbi_theme")) abort("theme must be a pbi_theme or preset name.")
   out <- structure(list(title = title, theme = theme, locale = locale, tables = list(),
     measures = list(), relationships = list(), pages = list(), filters = list(),
-    default_table = NULL, spec_version = "0.3.1"), class = "pbi_dashboard")
+    default_table = NULL, spec_version = "0.4.0"), class = "pbi_dashboard")
   if (is.data.frame(data)) out <- pbi_data(out, table, data)
   else if (!is.null(data)) {
     if (!is.list(data) || !length(data) || is.null(names(data))) abort("data must be a data frame or a named list of data frames.")
@@ -32,17 +32,24 @@ pbi_dashboard <- function(title, data = NULL, table = "data", theme = "linen", l
 }
 
 # Tasteful Power BI themes
-# @param preset One of linen, midnight, ocean, forest, ink, or accessible.
+# @param preset One of linen, midnight, ocean, forest, ink, accessible, or
+#   european_commission.
 # @param colors Optional categorical palette, as #RRGGBB colors.
 # @param background,surface,foreground,muted,accent Optional color overrides.
-# @param font Font family installed on the viewing computer.
+# @param font Font family installed on the viewing computer. Defaults to Arial
+#   for european_commission and Segoe UI for the other presets.
 # @param font_size,title_size Base and title font sizes.
+# @param title_color Optional scalar #RRGGBB heading color, separate from body
+#   foreground. Defaults to EC blue for european_commission and foreground
+#   for the other presets.
 # @return A pbi_theme object.
 # @export
-pbi_theme <- function(preset = c("linen", "midnight", "ocean", "forest", "ink", "accessible"),
+pbi_theme <- function(preset = c("linen", "midnight", "ocean", "forest", "ink", "accessible",
+                                 "european_commission"),
                       colors = NULL, background = NULL, surface = NULL,
                       foreground = NULL, muted = NULL, accent = NULL,
-                      font = "Segoe UI", font_size = 11, title_size = 15, text_size = NULL, palette = NULL) {
+                      font = "Segoe UI", font_size = 11, title_size = 15, text_size = NULL, palette = NULL,
+                      title_color = NULL) {
   if (!is.null(palette)) {
     if (!is.null(colors)) abort("Use colors or palette, not both.")
     colors <- palette
@@ -52,6 +59,7 @@ pbi_theme <- function(preset = c("linen", "midnight", "ocean", "forest", "ink", 
     font_size <- text_size
   }
   preset <- match.arg(preset)
+  if (missing(font) && preset == "european_commission") font <- "Arial"
   presets <- list(
     linen = list(colors = c("#007F7B", "#DF8C4D", "#6B7FA5", "#B46C7F", "#94A765", "#7C6CA1"),
       background = "#F3F4EF", surface = "#FFFFFF", foreground = "#203B43", muted = "#687A80", accent = "#007F7B"),
@@ -64,10 +72,18 @@ pbi_theme <- function(preset = c("linen", "midnight", "ocean", "forest", "ink", 
     ink = list(colors = c("#2B4C7E", "#A85F45", "#517E78", "#8C7298", "#9A854B", "#62738C"),
       background = "#FFFFFF", surface = "#FFFFFF", foreground = "#17212C", muted = "#586875", accent = "#2B4C7E"),
     accessible = list(colors = c("#0072B2", "#D55E00", "#009E73", "#CC79A7", "#E69F00", "#56B4E9", "#000000"),
-      background = "#F5F6F7", surface = "#FFFFFF", foreground = "#17212C", muted = "#54616C", accent = "#0072B2"))
+      background = "#F5F6F7", surface = "#FFFFFF", foreground = "#17212C", muted = "#54616C", accent = "#0072B2"),
+    # Template EC Colour Palette 2024 plus current ECL web neutrals and status
+    # colors. Sources and adaptations: inst/doc/EUROPEAN-COMMISSION-THEME.md.
+    european_commission = list(
+      colors = c("#003399", "#44BA7E", "#FF712C", "#48038C", "#FFD34E", "#DD0C86", "#000083"),
+      background = "#F2F6FF", surface = "#FFFFFF", foreground = "#00002E", muted = "#505070",
+      accent = "#0046FF", title_color = "#003399", good = "#049E62", bad = "#CB2029",
+      neutral = "#FF8A20", hyperlink = "#003399", visitedHyperlink = "#003399"))
   out <- presets[[preset]]
   overrides <- compact(list(colors = colors, background = background, surface = surface,
-                           foreground = foreground, muted = muted, accent = accent))
+                           foreground = foreground, muted = muted, accent = accent,
+                           title_color = title_color))
   invisible(lapply(names(overrides), function(nm) {
     color_check(overrides[[nm]], nm)
     if (nm != "colors") scalar_string(overrides[[nm]], nm)

@@ -4,6 +4,7 @@ This generator is a development tool, not a runtime dependency of pbiweave.
 from pathlib import Path
 import re, json
 ROOT = Path(__file__).resolve().parents[1]
+VERSION = re.search(r'^Version:\s*(\S+)', (ROOT/'DESCRIPTION').read_text(), re.M).group(1)
 
 # Explanations intentionally distinguish R construction from Power BI runtime.
 DOC = {
@@ -112,12 +113,16 @@ pbi_validate(d)$valid'''),
 pbi_validate(d)$valid'''),
 'pbi_theme': ('Choose coordinated colors and typography',
  'Constructs a theme specification used by the report and visual containers.',
- 'Presets are linen, midnight, ocean, forest, ink, and accessible. Override palette and background/foreground/surface together when adapting a brand so text remains readable. Colors use #RRGGBB. The accessible palette is an aid, not a guarantee of accessibility: still review contrast, color-independent labels, keyboard order, and actual Desktop rendering. Fonts are referenced by name; no font files are distributed.',
+ 'Presets are linen, midnight, ocean, forest, ink, accessible, and european_commission. The European Commission preset combines the supplied EC Colour Palette 2024 presentation template with current Europa Component Library surfaces. It is an original EC-inspired adaptation, not an official or certified theme. Override palette and background/foreground/surface together when adapting a brand so text remains readable. Colors use #RRGGBB. Fonts are referenced by name; no font files are distributed.',
  'A pbi_theme object accepted by pbi_dashboard().',
- '''theme <- pbi_theme("midnight", text_size = 13)
-d <- pbi_dashboard("Dark report", pbi_demo_data(), theme = theme) %>%
+ '''theme <- pbi_theme("european_commission")
+d <- pbi_dashboard("European Commission style", pbi_demo_data(), theme = theme) %>%
   pbi_page("Overview", pbi_bar("region", "revenue"))
-pbi_validate(d)$valid'''),
+pbi_validate(d)$valid
+# Override heading color independently on an existing preset.
+pbi_theme("linen", foreground = "#222222", title_color = "#003399")
+# Explicit fonts take precedence over preset defaults.
+pbi_theme("european_commission", font = "Segoe UI")'''),
 'pbi_layout': ('Declare how visuals occupy a fixed report canvas',
  'Constructs a grid, sidebar, focus, or free-position layout.',
  'A grid packs visual spans from left to right using first-fit placement. A sidebar places slicers in a left-hand column and other visuals in a grid on the right. A focus layout gives the first visual a large upper area and places others below it. Free layouts require pbi_place() on every visual. The compiler reserves a heading area. These are Power BI canvas arrangements, not responsive HTML/CSS breakpoints. Page scaling is native Power BI FitToPage.',
@@ -317,7 +322,9 @@ ARG = {
 'preset':'One of the coordinated built-in theme names.',
 'palette':'Optional vector of at least two #RRGGBB categorical colors.',
 'background':'Optional #RRGGBB page background.', 'foreground':'Optional #RRGGBB text color.',
-'surface':'Optional #RRGGBB visual-panel background.', 'font':'Font-family name referenced by the report.',
+'surface':'Optional #RRGGBB visual-panel background.',
+'font':'Font-family name referenced by the report. When omitted, european_commission uses Arial and existing presets use Segoe UI. An explicit font always takes precedence.',
+'title_color':'Optional scalar #RRGGBB heading color, independent of foreground. NULL uses #003399 for european_commission and the effective foreground for existing presets.',
 'text_size':'Base label/title size used by the theme.',
 'columns':'Grid column count, matrix column-group fields, or table fields, depending on the function.',
 'rows':'Grid row span or matrix row-group fields.',
@@ -433,7 +440,7 @@ revise('pbi_aggregate', example='''d <- pbi_dashboard("Mean transaction", pbi_de
 pbi_validate(d)$valid''')
 revise('pbi_relationship', details='from/from_column name the many-side fact key and to/to_column name the one-side dimension key. With single-direction filtering, dimension selections filter fact rows, not the reverse. from_table and to_table are named aliases; direction = "single" or "both" aliases bidirectional. Dimension keys must be unique and nonmissing after typed normalization. Text comparisons fold case and remove trailing ASCII spaces but preserve leading spaces. Other locale-specific equivalences require native review. unmatched defaults to "warn" for original compatibility; choose "error" for strict coverage or "allow" for intentional unknown facts. Active undirected cycles and parallel routes are conservatively rejected by pbi_validate(), even though some more complex native models could resolve them. Make alternative relationships inactive rather than suppressing the diagnostics.')
 revise('pbi_calendar', details='The source column must be a Date, not a timestamp. Bounds default to the nonmissing source range. This adds the same rich calendar as pbi_date_table(), including Date, Year, Quarter, Month, MonthName, YearMonth, Day, Weekday (Monday = 1) and WeekdayName, marks Date as the key and adds a many-to-one relationship. Both displayed month and weekday names have sort-by mappings. Bounds excluding fact dates produce unmatched-key diagnostics. For a standalone calendar or deliberate inactive relationship, use pbi_date_table() and pbi_relationship() separately.')
-revise('pbi_theme', details='Six coordinated presets are available: linen, midnight, ocean, forest, ink and accessible. The complete original theme controls are preserved, including muted/accent colors and separate base/title text sizes. colors needs at least three #RRGGBB values; all individual colors must be scalar. palette aliases colors and text_size aliases font_size, with conflicts rejected. Font families are references, not embedded font files. Verify font availability, contrast, label fit and alternative text in the intended viewing environment; a palette alone does not certify accessibility.')
+revise('pbi_theme', details='Seven coordinated presets are available: linen, midnight, ocean, forest, ink, accessible and european_commission. The European Commission preset is an original EC-inspired adaptation combining the supplied EC Colour Palette 2024 presentation template with current Europa Component Library surfaces; it is not an official or certified Commission theme. Its categorical colors are #003399, #44BA7E, #FF712C, #48038C, #FFD34E, #DD0C86 and #000083. It uses blue headings (#003399), dark body text (#00002E), a pale page background (#F2F6FF), white visual surfaces (#FFFFFF), muted text (#505070) and a web-blue accent (#0046FF). When font is omitted, this preset selects Arial; the six existing presets retain Segoe UI. An explicitly supplied font always wins. title_color controls headings independently from body text. NULL selects the EC blue for european_commission and otherwise follows the effective foreground, including a foreground override. The complete original theme controls are preserved, including muted/accent colors and separate base/title text sizes. colors needs at least three #RRGGBB values; all individual colors must be scalar. palette aliases colors and text_size aliases font_size, with conflicts rejected. Font families are references, not embedded font files. Verify font availability, contrast, label fit and alternative text in the intended viewing environment. A palette alone does not certify accessibility, and light chart colors need suitable labels and other visual distinctions.')
 revise('pbi_layout', details='grid places visuals in declaration order and honors pbi_span(). sidebar preserves the original first-visual-on-the-left behavior by default; sidebar_mode = "slicers" instead places every slicer in the left rail. pbi_screen() uses that second mode. sidebar_width is a fraction from 0.1 to 0.8, or at least 100 canvas pixels. focus enlarges the first visual above the rest, using focus_ratio. free uses pbi_place() coordinates. padding is the page margin; margin is a named alias. header reserves heading space, and header = 0 removes that generated heading. These are fixed canvas layouts, not CSS breakpoints.')
 revise('pbi_page', details='Supply complete native visuals directly or in a list. Page names and visual IDs must be unique within their respective scopes. Original presets wide, standard, portrait and a4 are supported, as is a numeric width/height size vector. Named width and height override the preset; "custom" uses wide defaults for unspecified dimensions. Filters supplied here are page-scoped pbi_filter() specifications. Hidden pages are presentation metadata, not security. At least one page must be visible. The default interactions = "default" uses native selection rules; "native" is an alias, "filter" forces filtering and "none" disables cross-visual selections. Report/page filters and model relationships are separate from these interaction settings.')
 revise('pbi_place', example='''d <- pbi_dashboard("Custom composition", pbi_demo_data()) %>%
@@ -650,7 +657,7 @@ pbi_validate(x)$valid
 \details{On FIRST OPEN select Home -> Refresh in Power BI Desktop. Then inspect the report and Save As .pbix to include the loaded data. R performs build-time preparation; the report has native filtering and aggregation, not R callbacks. See the README for both complete flights tutorials and all function examples. Installed guides are in system.file("doc", package = "pbiweave").}
 \seealso{\code{\link{pbi_example}}, \code{\link{pbi_compile}}, \code{\link{pbi_input}}}
 ''')
-ref=['# pbiweave 0.3.1 function reference','','Each of the 49 package functions has an installed help topic with arguments, explanations, return values and an example. `%>%` is reexported from magrittr and has a separate help topic.',
+ref=[f'# pbiweave {VERSION} function reference','','Each of the 49 package functions has an installed help topic with arguments, explanations, return values and an example. `%>%` is reexported from magrittr and has a separate help topic.',
      '**FIRST OPEN: Home ➜ Refresh in Power BI Desktop, inspect, then Save As `.pbix`.**','']
 for name in exports:
     title,desc,details,value,example=DOC[name]

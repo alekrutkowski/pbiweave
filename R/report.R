@@ -231,13 +231,18 @@ default_visual_title <- function(visual) {
     paste(field_name(f$y), "by", field_name(f$x)))
 }
 
+# Older saved theme objects have no separate heading color.
+theme_title_color <- function(theme) {
+  if (is.null(theme$title_color)) theme$foreground else theme$title_color
+}
+
 visual_container_style <- function(visual, theme, title) {
   title_show <- nzchar(title) && !visual$type %in% c("text", "slicer")
   alt <- if (!is.null(visual$alt)) visual$alt else if (nzchar(title)) title else
     if (visual$type == "text") visual$options$text else paste(visual$type, "visual")
   list(
     title = format_object(list(show = format_literal(title_show),
-      text = format_literal(title), fontColor = format_color(theme$foreground),
+      text = format_literal(title), fontColor = format_color(theme_title_color(theme)),
       fontSize = format_literal(theme$title_size), fontFamily = format_literal(theme$font),
       alignment = format_literal("left"), titleWrap = format_literal(TRUE))),
     background = format_object(list(show = format_literal(visual$type != "text"),
@@ -272,7 +277,7 @@ visual_specific_style <- function(visual, theme, position) {
         selectAllCheckboxEnabled = format_literal(!isTRUE(o$single_select)))),
       header = format_object(list(show = format_literal(TRUE),
         text = format_literal(default_visual_title(visual)),
-        fontColor = format_color(theme$foreground), textSize = format_literal(theme$font_size))),
+        fontColor = format_color(theme_title_color(theme)), textSize = format_literal(theme$font_size))),
       items = format_object(list(fontColor = format_color(theme$foreground),
         background = format_color(theme$surface), textSize = format_literal(theme$font_size)))))
   }
@@ -284,7 +289,7 @@ visual_specific_style <- function(visual, theme, position) {
     layout = format_object(list(paddingUniform = format_literal(0)), list(id = "default"))))
   if (type %in% c("table", "matrix")) return(list(
     columnHeaders = format_object(list(autoSizeColumnWidth = format_literal(TRUE),
-      columnAdjustment = format_literal("growToFit"), fontColor = format_color(theme$foreground),
+      columnAdjustment = format_literal("growToFit"), fontColor = format_color(theme_title_color(theme)),
       backColor = format_color(theme$surface), fontSize = format_literal(theme$font_size))),
     values = format_object(list(fontColorPrimary = format_color(theme$foreground),
       fontColorSecondary = format_color(theme$foreground), backColorPrimary = format_color(theme$surface),
@@ -330,7 +335,7 @@ compile_visual <- function(dashboard, visual, position, id, context) {
 }
 
 compile_theme <- function(theme) {
-  list(`$schema` = "https://raw.githubusercontent.com/microsoft/powerbi-desktop-samples/main/Report%20Theme%20JSON%20Schema/reportThemeSchema-2.159.json",
+  out <- list(`$schema` = "https://raw.githubusercontent.com/microsoft/powerbi-desktop-samples/main/Report%20Theme%20JSON%20Schema/reportThemeSchema-2.159.json",
        name = theme$name, dataColors = as.list(theme$colors),
        background = theme$surface, foreground = theme$foreground, tableAccent = theme$accent,
        firstLevelElements = theme$foreground, secondLevelElements = theme$muted,
@@ -338,9 +343,11 @@ compile_theme <- function(theme) {
        secondaryBackground = theme$background,
        textClasses = list(
          callout = list(fontFace = theme$font, fontSize = 32, color = theme$foreground),
-         title = list(fontFace = theme$font, fontSize = theme$title_size, color = theme$foreground),
-         header = list(fontFace = theme$font, fontSize = theme$font_size, color = theme$foreground),
+         title = list(fontFace = theme$font, fontSize = theme$title_size, color = theme_title_color(theme)),
+         header = list(fontFace = theme$font, fontSize = theme$font_size, color = theme_title_color(theme)),
          label = list(fontFace = theme$font, fontSize = theme$font_size, color = theme$muted)))
+  c(out, compact(list(good = theme$good, bad = theme$bad, neutral = theme$neutral,
+                      hyperlink = theme$hyperlink, visitedHyperlink = theme$visitedHyperlink)))
 }
 
 compile_report <- function(dashboard, report_dir, model_folder) {
@@ -399,7 +406,7 @@ compile_report <- function(dashboard, report_dir, model_folder) {
       title <- if (identical(dashboard$title, page$name)) page$name else
         paste(dashboard$title, page$name, sep = " | ")
       header <- list(type = "text", title = "", alt = title, filters = list(),
-        options = list(text = title, font_size = 24, color = dashboard$theme$foreground))
+        options = list(text = title, font_size = 24, color = theme_title_color(dashboard$theme)))
       position <- list(x = page$layout$padding, y = page$layout$padding, z = 0,
         width = page$width - 2 * page$layout$padding,
         height = page$layout$header, tabOrder = 0)

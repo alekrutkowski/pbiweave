@@ -45,7 +45,7 @@
   },
   "pbi_theme": {
     "title": "Choose coordinated colors and typography",
-    "example": "theme <- pbi_theme(\"midnight\", text_size = 13)\nd <- pbi_dashboard(\"Dark report\", pbi_demo_data(), theme = theme) %>%\n  pbi_page(\"Overview\", pbi_bar(\"region\", \"revenue\"))\npbi_validate(d)$valid"
+    "example": "theme <- pbi_theme(\"european_commission\")\nd <- pbi_dashboard(\"European Commission style\", pbi_demo_data(), theme = theme) %>%\n  pbi_page(\"Overview\", pbi_bar(\"region\", \"revenue\"))\npbi_validate(d)$valid\n# Override heading color independently on an existing preset.\npbi_theme(\"linen\", foreground = \"#222222\", title_color = \"#003399\")\n# Explicit fonts take precedence over preset defaults.\npbi_theme(\"european_commission\", font = \"Segoe UI\")"
   },
   "pbi_layout": {
     "title": "Declare how visuals occupy a fixed report canvas",

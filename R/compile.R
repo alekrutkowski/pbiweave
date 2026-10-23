@@ -74,8 +74,8 @@ pbi_compile <- function(x, path, overwrite = FALSE, bundle = FALSE,
   source_files <- sort(list.files(stage, recursive = TRUE, full.names = TRUE, all.files = TRUE))
   files <- lapply(source_files, function(f) list(path = substring(f, nchar(stage) + 2L),
     bytes = unname(file.info(f)$size), md5 = unname(tools::md5sum(f))))
-  manifest <- list(generator = "pbiweave", package = "pbiweave", packageVersion = "0.3.1",
-    version = "0.3.1", title = x$title, format = paste0("PBIP/PBIR/", toupper(model_format)),
+  manifest <- list(generator = "pbiweave", package = "pbiweave", packageVersion = "0.4.0",
+    version = "0.4.0", title = x$title, format = paste0("PBIP/PBIR/", toupper(model_format)),
     model_format = model_format, schemaProfile = "2026-10-20", embeddedSourceData = TRUE,
     requiresDesktopRefresh = TRUE, requiresDesktopSaveForPBIX = TRUE,
     first_refresh_required = TRUE, runtime_checked = FALSE,

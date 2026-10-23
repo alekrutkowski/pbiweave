@@ -4,12 +4,13 @@ The complete repository contains development tools intentionally excluded from t
 
 ```sh
 python tools/make_docs.py
+Rscript tools/export-themes.R
 python tools/check-static.py
 python -m pip install 'jsonschema>=4.18,<5'
 python tools/test_static.py
 R CMD build .
-R CMD check --no-manual pbiweave_0.3.1.tar.gz
-R CMD INSTALL pbiweave_0.3.1.tar.gz
+R CMD check --no-manual pbiweave_0.4.0.tar.gz
+R CMD INSTALL pbiweave_0.4.0.tar.gz
 Rscript tools/run-acceptance.R --flights
 python tools/validate_project.py build/examples build/tutorials --json
 ```

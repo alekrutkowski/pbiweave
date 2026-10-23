@@ -1,0 +1,22 @@
+[
+  {
+    "project": "european-commission-tmdl",
+    "valid": true,
+    "json_files": 19,
+    "schema_validated_files": 18,
+    "pages": 2,
+    "visuals": 9,
+    "errors": [],
+    "scope": "Offline JSON schemas, cross-file references and generated-TMDL inventory only; no native TMDL parsing, M/DAX execution or rendering."
+  },
+  {
+    "project": "european-commission-tmsl",
+    "valid": true,
+    "json_files": 20,
+    "schema_validated_files": 18,
+    "pages": 2,
+    "visuals": 9,
+    "errors": [],
+    "scope": "Offline JSON schemas, cross-file references and generated-TMDL inventory only; no native TMDL parsing, M/DAX execution or rendering."
+  }
+]

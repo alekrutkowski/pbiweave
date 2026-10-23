@@ -1,0 +1,61 @@
+{
+  "runtime": "R version 4.6.0 (2026-04-24)",
+  "webR": "0.6.0",
+  "scope": "R source functions evaluated in WebAssembly; not native Windows/Linux R CMD check",
+  "tests": [
+    {
+      "test": "European Commission preset works through public constructors",
+      "nb": 13,
+      "failed": 0,
+      "skipped": false,
+      "error": false,
+      "warning": 0,
+      "passed": 13
+    },
+    {
+      "test": "the original six preset defaults and default choice are preserved",
+      "nb": 8,
+      "failed": 0,
+      "skipped": false,
+      "error": false,
+      "warning": 0,
+      "passed": 8
+    },
+    {
+      "test": "Commission theme overrides are independent and aliases still agree",
+      "nb": 12,
+      "failed": 0,
+      "skipped": false,
+      "error": false,
+      "warning": 0,
+      "passed": 12
+    },
+    {
+      "test": "Commission theme JSON and the importable resource remain synchronized",
+      "nb": 12,
+      "failed": 0,
+      "skipped": false,
+      "error": false,
+      "warning": 0,
+      "passed": 12
+    },
+    {
+      "test": "legacy themes and heading overrides preserve independent body text",
+      "nb": 20,
+      "failed": 0,
+      "skipped": false,
+      "error": false,
+      "warning": 0,
+      "passed": 20
+    },
+    {
+      "test": "Commission theme is applied to complete TMDL and TMSL projects",
+      "nb": 38,
+      "failed": 0,
+      "skipped": false,
+      "error": false,
+      "warning": 0,
+      "passed": 38
+    }
+  ]
+}

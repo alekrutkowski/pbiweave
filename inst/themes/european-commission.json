@@ -1,0 +1,48 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/powerbi-desktop-samples/main/Report%20Theme%20JSON%20Schema/reportThemeSchema-2.159.json",
+  "name": "pbiweave-european_commission",
+  "dataColors": [
+    "#003399",
+    "#44BA7E",
+    "#FF712C",
+    "#48038C",
+    "#FFD34E",
+    "#DD0C86",
+    "#000083"
+  ],
+  "background": "#FFFFFF",
+  "foreground": "#00002E",
+  "tableAccent": "#0046FF",
+  "firstLevelElements": "#00002E",
+  "secondLevelElements": "#505070",
+  "thirdLevelElements": "#505070",
+  "fourthLevelElements": "#505070",
+  "secondaryBackground": "#F2F6FF",
+  "textClasses": {
+    "callout": {
+      "fontFace": "Arial",
+      "fontSize": 32,
+      "color": "#00002E"
+    },
+    "title": {
+      "fontFace": "Arial",
+      "fontSize": 15,
+      "color": "#003399"
+    },
+    "header": {
+      "fontFace": "Arial",
+      "fontSize": 11,
+      "color": "#003399"
+    },
+    "label": {
+      "fontFace": "Arial",
+      "fontSize": 11,
+      "color": "#505070"
+    }
+  },
+  "good": "#049E62",
+  "bad": "#CB2029",
+  "neutral": "#FF8A20",
+  "hyperlink": "#003399",
+  "visitedHyperlink": "#003399"
+}

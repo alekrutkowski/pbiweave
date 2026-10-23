@@ -7,7 +7,9 @@ library(data.table)
 root <- normalizePath(".", winslash = "/", mustWork = TRUE)
 if (!file.exists("DESCRIPTION") || !dir.exists("R") || !file.exists("tools/verify-readme-coverage.R"))
   stop("Run from the extracted repository root.")
-if (as.character(packageVersion("pbiweave")) != "0.3.1") stop("Install and load 0.3.1 before this gate.")
+expected_version <- read.dcf("DESCRIPTION", fields = "Version")[[1L]]
+if (as.character(packageVersion("pbiweave")) != expected_version)
+  stop("Install and load ", expected_version, " before this gate.")
 if (dir.exists("build/examples") || dir.exists("build/tutorials"))
   stop("Choose a fresh checkout or move old build/examples and build/tutorials aside; results must be fresh.")
 dir.create("build", showWarnings = FALSE)
@@ -20,6 +22,7 @@ invisible(lapply(getNamespaceExports("pbiweave"), function(name)
   utils::example(name, package = "pbiweave", ask = FALSE, echo = FALSE, run.dontrun = FALSE)))
 Sys.setenv(PBIWEAVE_EXAMPLE_DIR = file.path(root, "build", "examples"))
 source("inst/examples/run-all.R", local = new.env(parent = globalenv()))
+source("inst/examples/03-european-commission.R", local = new.env(parent = globalenv()))
 if ("--flights" %in% args) {
   if (!requireNamespace("nycflights13", quietly = TRUE)) stop("Install nycflights13 for --flights.")
   dir.create("build/tutorials", recursive = TRUE)
@@ -32,6 +35,7 @@ if ("--flights" %in% args) {
 result <- list(package = "pbiweave", version = as.character(packageVersion("pbiweave")),
   R = R.version.string, platform = R.version$platform,
   R_tests_and_help_examples_completed = TRUE, built_in_projects = 34L,
+  european_commission_projects = 2L, example_projects = 36L,
   flight_tutorials_completed = "--flights" %in% args,
   native_TMDL_parser_executed = FALSE, M_DAX_executed = FALSE, Desktop_rendered = FALSE)
 writeLines(jsonlite::toJSON(result, pretty = TRUE, auto_unbox = TRUE), "build/R-acceptance.json")

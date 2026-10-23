@@ -1,3 +1,22 @@
+# pbiweave 0.4.0
+
+## European Commission theme
+
+* Add `european_commission`, a seventh preset available through `pbi_theme()`,
+  `pbi_dashboard(theme = ...)` and `pbi_example(theme = ...)`.
+* Combine the supplied PowerPoint template's `EC Colour Palette 2024`, Arial
+  typography and blue titles with current European Commission web colors for
+  text, surfaces, highlights and semantic status colors.
+* Add optional `title_color` at the end of `pbi_theme()` so title styling can
+  differ from body text without changing existing positional arguments. The
+  new preset defaults to Arial only when `font` is omitted. Existing presets
+  retain their colors and font defaults.
+* Include a complete example and a design guide with exact template provenance,
+  official web references, customization options and font/rendering notes.
+* Bundle an importable JSON theme and its regeneration script alongside the R
+  preset. Compiled reports also apply explicit page and visual formatting.
+* Add identity-source acknowledgements. No new runtime dependencies are needed.
+
 # pbiweave 0.3.1
 
 ## Windows path-guard hotfix

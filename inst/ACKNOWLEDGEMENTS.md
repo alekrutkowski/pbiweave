@@ -51,6 +51,25 @@ The accessible categorical palette is based on the widely used Okabe-Ito colors.
 Color choices alone do not establish accessibility conformance; use clear labels,
 alt text and review the final report in its intended context.
 
+## European Commission identity references
+
+The `european_commission` theme is an original pbiweave adaptation of two visual
+references: the user-supplied `Presentation template.pptx`, whose main theme is
+named `EC Colour Palette 2024`, and the European Commission's public Europa
+Component Library guidance. The template supplied the categorical colors,
+Arial typeface and title blue. ECL supplied the current web colors for surfaces,
+text, highlights and semantic status colors.
+
+* [EC color guidelines](https://ec.europa.eu/component-library/ec/guidelines/colours/)
+* [EC typography guidelines](https://ec.europa.eu/component-library/ec/guidelines/typography/)
+* [European Commission website](https://commission.europa.eu/index_en)
+* [Exact source mapping and adaptation notes](doc/EUROPEAN-COMMISSION-THEME.md)
+
+The references were checked on 23 October 2026. No Commission logo, emblem,
+PowerPoint template, ECL implementation code or font file is bundled. This
+addition creates no new package dependency and implies no affiliation with,
+approval by or endorsement from the European Commission or the European Union.
+
 ## Primary documentation used
 
 - [Power BI project format](https://learn.microsoft.com/en-us/power-bi/developer/projects/projects-overview)
@@ -79,3 +98,11 @@ upstream data notices for the terms applicable to those datasets.
 No proprietary Power BI binary, Microsoft TOM assembly, or font file is distributed.
 The native acceptance helper loads an assembly explicitly supplied from a trusted
 Microsoft installation.
+
+## Focused 0.4.0 validation runtime
+
+The new theme's R checks were executed with [webR](https://github.com/r-wasm/webr),
+version 0.6.0, and its R 4.6.0 WebAssembly runtime, by the webR contributors.
+webR and its binary package repository were used as external development tools;
+neither is bundled or required by pbiweave. The native R tests remain in the
+repository and GitHub workflow. See `doc/VALIDATION.md` for the exact scope.

@@ -21,8 +21,9 @@
 - [Three-data-frame tutorial](#intermediate-tutorial-three-data-frames-and-an-r-preaggregated-model)
 - [Sixteen examples](#sixteen-pedagogical-examples)
 - [Every-function index](#every-public-function)
-- [Shiny guide](pbiweave-for-shiny-developers.md)
-- [Reference](REFERENCE.md).
+- [Shiny guide](inst/doc/pbiweave-for-shiny-developers.md)
+- [Reference](inst/doc/REFERENCE.md)
+- [European Commission theme](inst/doc/EUROPEAN-COMMISSION-THEME.md).
 
 ## Install
 
@@ -36,10 +37,43 @@ install.packages(c("data.table", "jsonlite", "base64enc", "magrittr", "digest", 
 remotes::install_github("alekrutkowski/pbiweave")
 
 # Alternative, take the file from the "Releases"
-install.packages("pbiweave_0.3.1.tar.gz", repos = NULL, type = "source")
+install.packages("pbiweave_0.4.0.tar.gz", repos = NULL, type = "source")
 ```
 
 For the two full tutorials also install `nycflights13`; `bit64` is optional for its native large-integer vectors. Neither is a runtime dependency of a compiled report.
+
+## European Commission theme in 0.4.0
+
+Select `theme = "european_commission"` to combine the supplied European Commission
+PowerPoint template's blue titles, Arial typeface and six accent colors with the
+current EC website's light blue canvas, dark text and bright blue highlights.
+The other six presets keep their existing colors and font defaults.
+
+```r
+library(pbiweave)
+
+project <- pbi_example("showcase", theme = "european_commission") %>%
+  pbi_compile("commission-showcase-v040", bundle = TRUE)
+
+# A theme object also works in pbi_dashboard() or pbi_example().
+ec <- pbi_theme("european_commission", title_size = 17)
+report <- pbi_dashboard("Programme overview", pbi_demo_data(), theme = ec) %>%
+  pbi_page("Overview", pbi_bar("region", "revenue", title = "Revenue by region"))
+```
+
+The preset uses template blue `#003399` for titles and the first series, then
+`#44BA7E`, `#FF712C`, `#48038C`, `#FFD34E`, `#DD0C86` and `#000083`. Arial is the
+default only when `font` is omitted; explicit font choices remain effective.
+`title_color` is a new optional argument at the end of `pbi_theme()`.
+
+See the [design choices, source colors and customization examples](inst/doc/EUROPEAN-COMMISSION-THEME.md)
+and the installed script
+`system.file("examples", "03-european-commission.R", package = "pbiweave")`.
+A standalone JSON theme is bundled at
+`system.file("themes", "european-commission.json", package = "pbiweave")` for
+importing its palette, typography and semantic defaults into existing reports.
+This is an independent adaptation with no official Commission affiliation.
+Open the generated project in Power BI Desktop and select **Home ➜ Refresh**.
 
 ## The complete first workflow example
 
@@ -48,7 +82,7 @@ library(pbiweave)
 library(data.table)
 
 project <- pbi_example("showcase", theme = "midnight") %>%
-  pbi_compile("commercial-dashboard-v031", bundle = TRUE)
+  pbi_compile("commercial-dashboard-v040", bundle = TRUE)
 
 check <- pbi_check(project, verify_hashes = TRUE)
 stopifnot(check$valid)
@@ -200,7 +234,7 @@ Check the synchronized date, carrier and origin choices on both pages. A table v
 
 ### 4. Change the report in R
 
-Change `theme = "midnight"` to `"linen"`, `"ocean"`, `"forest"`, `"ink"` or `"accessible"`; change titles, layout columns or visible fields; or compute another feature before constructing the dashboard. Recompile to a new directory and reopen Desktop. An already open project does not live-reload external edits. No source data have been fetched by the generated report: its refresh rereads the embedded snapshot.
+Change `theme = "midnight"` to `"linen"`, `"ocean"`, `"forest"`, `"ink"`, `"accessible"` or `"european_commission"`; change titles, layout columns or visible fields; or compute another feature before constructing the dashboard. Recompile to a new directory and reopen Desktop. An already open project does not live-reload external edits. No source data have been fetched by the generated report: its refresh rereads the embedded snapshot.
 
 ## Intermediate tutorial: three data frames and an R-preaggregated model
 
@@ -330,7 +364,7 @@ Compare the all-data totals with `expected`, then compare a selected carrier/des
 
 Native visual families include bar/column, line, area, scatter/bubble, pie, donut, treemap, funnel, waterfall, modern multi-value card, gauge, table, matrix, slicer and static text. Grid spans, first-visual or all-slicer sidebars, focus compositions and free coordinates are supported. Wide, standard, portrait, A4-proportioned and custom canvases are fixed layouts, not automatic mobile reflow.
 
-The six coordinated themes retain separate base/title text sizes, foreground/background/accent/muted controls, categorical colors and explicit visual/table formatting. Alternative text, hidden pages, optional heading bands, per-page backgrounds, typed static filters, synchronized slicers, full calendars and structured diagnostics are retained from 0.1.0.
+The seven coordinated themes retain separate base/title text sizes, foreground/background/accent/muted controls, categorical colors and explicit visual/table formatting. Alternative text, hidden pages, optional heading bands, per-page backgrounds, typed static filters, synchronized slicers, full calendars and structured diagnostics are retained from 0.1.0.
 
 ## Sixteen pedagogical examples
 
@@ -399,7 +433,7 @@ dashboard <- pbi_dashboard("Typed data") %>%
 
 Fixed-decimal currency has four fractional digits in the Power BI model. Supply exact decimal strings when binary floating-point conversion would be undesirable; choose a numeric double column when your values require a different scale.
 
-### 3. Six coordinated themes
+### 3. Seven coordinated themes
 
 **Example ID:** `themes`
 
@@ -416,10 +450,11 @@ dashboard <- pbi_dashboard("A consistent visual language", pbi_demo_data(), them
   )
 ```
 
-Build the same report in all six presets:
+Build the same report in all seven presets:
 
 ```r
-theme_names <- c("linen", "midnight", "ocean", "forest", "ink", "accessible")
+theme_names <- c("linen", "midnight", "ocean", "forest", "ink", "accessible",
+                 "european_commission")
 theme_reports <- setNames(
   lapply(theme_names, function(name) {
     pbi_example("themes", theme = name)
@@ -840,11 +875,11 @@ wired <- pbi_dashboard("Explicit selections", pbi_demo_data()) %>%
 pbi_flow(wired)
 ```
 
-`pbi_screen()` starts with disabled cross-visual edges. `pbi_bind()` names the allowed directed selections. An ordinary `pbi_page()` instead retains native interactions by default. The static flow table does not infer DAX dependencies, relationship propagation or synchronized cross-page state. Read the complete [Shiny-developer guide](pbiweave-for-shiny-developers.md), including finite R-precomputed scenarios and safe handling of an initially unselected scenario.
+`pbi_screen()` starts with disabled cross-visual edges. `pbi_bind()` names the allowed directed selections. An ordinary `pbi_page()` instead retains native interactions by default. The static flow table does not infer DAX dependencies, relationship propagation or synchronized cross-page state. Read the complete [Shiny-developer guide](inst/doc/pbiweave-for-shiny-developers.md), including finite R-precomputed scenarios and safe handling of an initially unselected scenario.
 
 ## Additional function examples
 
-These short independent examples complete public-API coverage. Each runs after the two library calls above. The [function reference](REFERENCE.md) and installed `?function_name` help explain arguments, return values and edge cases.
+These short independent examples complete public-API coverage. Each runs after the two library calls above. The [function reference](inst/doc/REFERENCE.md) and installed `?function_name` help explain arguments, return values and edge cases.
 
 ### `pbi_bundle()`
 
@@ -920,55 +955,55 @@ The table below lists all **50 exports**, including `%>%`. Every function has a 
 
 | Function | Purpose |
 |---|---|
-| [`pbi_aggregate()`](REFERENCE.md) | Choose the selection-time summary for a column |
-| [`pbi_area()`](REFERENCE.md) | Show a filled trend |
-| [`pbi_bar()`](REFERENCE.md) | Compare categories with a bar or column chart |
-| [`pbi_bind()`](REFERENCE.md) | Declare which visual selections affect which outputs |
-| [`pbi_bundle()`](REFERENCE.md) | Bundle an existing project without recompiling it |
-| [`pbi_calendar()`](REFERENCE.md) | Build a contiguous calendar in R |
-| [`pbi_card()`](REFERENCE.md) | Present one or several selection-dependent values |
-| [`pbi_check()`](REFERENCE.md) | Inspect a generated project without claiming it is refreshed |
-| [`pbi_column()`](REFERENCE.md) | Describe a column for the semantic model |
-| [`pbi_compile()`](REFERENCE.md) | Compile a portable project using TMDL by default |
-| [`pbi_dashboard()`](REFERENCE.md) | Start a declarative report specification |
-| [`pbi_data()`](REFERENCE.md) | Embed another data frame in the model |
-| [`pbi_date_table()`](REFERENCE.md) | Add a standalone, richly described calendar dimension |
-| [`pbi_demo_data()`](REFERENCE.md) | Create deterministic demonstration data without changing the RNG |
-| [`pbi_donut()`](REFERENCE.md) | Show a compact part-to-whole composition |
-| [`pbi_example()`](REFERENCE.md) | Construct one of the teaching report specifications |
-| [`pbi_field()`](REFERENCE.md) | Refer to a model column without writing DAX |
-| [`pbi_filter()`](REFERENCE.md) | Apply a static include or exclude filter at a chosen scope |
-| [`pbi_filters()`](REFERENCE.md) | Attach reusable filters to the entire report |
-| [`pbi_flow()`](REFERENCE.md) | Inspect declared visual-interaction dependencies |
-| [`pbi_funnel()`](REFERENCE.md) | Display ordered stages or ranked categories |
-| [`pbi_gauge()`](REFERENCE.md) | Compare a value with a target and bounded scale |
-| [`pbi_input()`](REFERENCE.md) | Declare a Shiny-style input ID backed by a native slicer |
-| [`pbi_inspect()`](REFERENCE.md) | Inspect snapshot sizes and report complexity |
-| [`pbi_layout()`](REFERENCE.md) | Declare how visuals occupy a fixed report canvas |
-| [`pbi_line()`](REFERENCE.md) | Show a trend or ordered comparison |
-| [`pbi_matrix()`](REFERENCE.md) | Cross-tabulate values by row and column groups |
-| [`pbi_measure()`](REFERENCE.md) | Define an optional DAX measure |
-| [`pbi_open()`](REFERENCE.md) | Open the project and print the mandatory first-refresh instructions |
-| [`pbi_output()`](REFERENCE.md) | Give a native visual a stable output ID |
-| [`pbi_page()`](REFERENCE.md) | Add a page of native visuals |
-| [`pbi_pie()`](REFERENCE.md) | Show a small categorical composition |
-| [`pbi_place()`](REFERENCE.md) | Place a visual precisely on a free-layout page |
-| [`pbi_prepare()`](REFERENCE.md) | Run a build-time R transformation on a private copy |
-| [`pbi_ratio()`](REFERENCE.md) | Combine R-precomputed sufficient statistics correctly |
-| [`pbi_ref()`](REFERENCE.md) | Refer to an explicitly defined model measure |
-| [`pbi_relationship()`](REFERENCE.md) | Connect a fact table to a unique dimension key |
-| [`pbi_scatter()`](REFERENCE.md) | Compare observations or aggregates in two dimensions |
-| [`pbi_screen()`](REFERENCE.md) | Add an explicitly wired, Shiny-style screen |
-| [`pbi_slicer()`](REFERENCE.md) | Add a viewer-operated filter |
-| [`pbi_sort()`](REFERENCE.md) | Set a visual query's sort order |
-| [`pbi_span()`](REFERENCE.md) | Give a visual more grid cells |
-| [`pbi_table()`](REFERENCE.md) | Show unaggregated detail fields or explicit summaries |
-| [`pbi_text()`](REFERENCE.md) | Add static explanatory text |
-| [`pbi_theme()`](REFERENCE.md) | Choose coordinated colors and typography |
-| [`pbi_treemap()`](REFERENCE.md) | Show a hierarchical area composition |
-| [`pbi_validate()`](REFERENCE.md) | Preflight a report specification before writing files |
-| [`pbi_waterfall()`](REFERENCE.md) | Explain additive contributions to a total |
-| [`pbi_where()`](REFERENCE.md) | Attach reusable filters to one visual |
+| [`pbi_aggregate()`](inst/doc/REFERENCE.md) | Choose the selection-time summary for a column |
+| [`pbi_area()`](inst/doc/REFERENCE.md) | Show a filled trend |
+| [`pbi_bar()`](inst/doc/REFERENCE.md) | Compare categories with a bar or column chart |
+| [`pbi_bind()`](inst/doc/REFERENCE.md) | Declare which visual selections affect which outputs |
+| [`pbi_bundle()`](inst/doc/REFERENCE.md) | Bundle an existing project without recompiling it |
+| [`pbi_calendar()`](inst/doc/REFERENCE.md) | Build a contiguous calendar in R |
+| [`pbi_card()`](inst/doc/REFERENCE.md) | Present one or several selection-dependent values |
+| [`pbi_check()`](inst/doc/REFERENCE.md) | Inspect a generated project without claiming it is refreshed |
+| [`pbi_column()`](inst/doc/REFERENCE.md) | Describe a column for the semantic model |
+| [`pbi_compile()`](inst/doc/REFERENCE.md) | Compile a portable project using TMDL by default |
+| [`pbi_dashboard()`](inst/doc/REFERENCE.md) | Start a declarative report specification |
+| [`pbi_data()`](inst/doc/REFERENCE.md) | Embed another data frame in the model |
+| [`pbi_date_table()`](inst/doc/REFERENCE.md) | Add a standalone, richly described calendar dimension |
+| [`pbi_demo_data()`](inst/doc/REFERENCE.md) | Create deterministic demonstration data without changing the RNG |
+| [`pbi_donut()`](inst/doc/REFERENCE.md) | Show a compact part-to-whole composition |
+| [`pbi_example()`](inst/doc/REFERENCE.md) | Construct one of the teaching report specifications |
+| [`pbi_field()`](inst/doc/REFERENCE.md) | Refer to a model column without writing DAX |
+| [`pbi_filter()`](inst/doc/REFERENCE.md) | Apply a static include or exclude filter at a chosen scope |
+| [`pbi_filters()`](inst/doc/REFERENCE.md) | Attach reusable filters to the entire report |
+| [`pbi_flow()`](inst/doc/REFERENCE.md) | Inspect declared visual-interaction dependencies |
+| [`pbi_funnel()`](inst/doc/REFERENCE.md) | Display ordered stages or ranked categories |
+| [`pbi_gauge()`](inst/doc/REFERENCE.md) | Compare a value with a target and bounded scale |
+| [`pbi_input()`](inst/doc/REFERENCE.md) | Declare a Shiny-style input ID backed by a native slicer |
+| [`pbi_inspect()`](inst/doc/REFERENCE.md) | Inspect snapshot sizes and report complexity |
+| [`pbi_layout()`](inst/doc/REFERENCE.md) | Declare how visuals occupy a fixed report canvas |
+| [`pbi_line()`](inst/doc/REFERENCE.md) | Show a trend or ordered comparison |
+| [`pbi_matrix()`](inst/doc/REFERENCE.md) | Cross-tabulate values by row and column groups |
+| [`pbi_measure()`](inst/doc/REFERENCE.md) | Define an optional DAX measure |
+| [`pbi_open()`](inst/doc/REFERENCE.md) | Open the project and print the mandatory first-refresh instructions |
+| [`pbi_output()`](inst/doc/REFERENCE.md) | Give a native visual a stable output ID |
+| [`pbi_page()`](inst/doc/REFERENCE.md) | Add a page of native visuals |
+| [`pbi_pie()`](inst/doc/REFERENCE.md) | Show a small categorical composition |
+| [`pbi_place()`](inst/doc/REFERENCE.md) | Place a visual precisely on a free-layout page |
+| [`pbi_prepare()`](inst/doc/REFERENCE.md) | Run a build-time R transformation on a private copy |
+| [`pbi_ratio()`](inst/doc/REFERENCE.md) | Combine R-precomputed sufficient statistics correctly |
+| [`pbi_ref()`](inst/doc/REFERENCE.md) | Refer to an explicitly defined model measure |
+| [`pbi_relationship()`](inst/doc/REFERENCE.md) | Connect a fact table to a unique dimension key |
+| [`pbi_scatter()`](inst/doc/REFERENCE.md) | Compare observations or aggregates in two dimensions |
+| [`pbi_screen()`](inst/doc/REFERENCE.md) | Add an explicitly wired, Shiny-style screen |
+| [`pbi_slicer()`](inst/doc/REFERENCE.md) | Add a viewer-operated filter |
+| [`pbi_sort()`](inst/doc/REFERENCE.md) | Set a visual query's sort order |
+| [`pbi_span()`](inst/doc/REFERENCE.md) | Give a visual more grid cells |
+| [`pbi_table()`](inst/doc/REFERENCE.md) | Show unaggregated detail fields or explicit summaries |
+| [`pbi_text()`](inst/doc/REFERENCE.md) | Add static explanatory text |
+| [`pbi_theme()`](inst/doc/REFERENCE.md) | Choose coordinated colors and typography |
+| [`pbi_treemap()`](inst/doc/REFERENCE.md) | Show a hierarchical area composition |
+| [`pbi_validate()`](inst/doc/REFERENCE.md) | Preflight a report specification before writing files |
+| [`pbi_waterfall()`](inst/doc/REFERENCE.md) | Explain additive contributions to a total |
+| [`pbi_where()`](inst/doc/REFERENCE.md) | Attach reusable filters to one visual |
 | `%>%` | Magrittr forward pipe, used throughout the declarations. |
 
 ## Limits and correctness decisions
@@ -979,7 +1014,7 @@ A text tooltip is a text grouping field, not an implicit count. Explicit `pbi_fi
 
 Arbitrary DAX is accepted but not evaluated in R. This package does not implement R visual callbacks, custom `.pbiviz` loading, maps, bookmarks, drillthrough, conditional formatting, RLS administration, DirectQuery/Direct Lake, mobile-layout authoring, credentials or Service publishing. Hidden fields, disabled interactions and static filters are **not security**; every embedded row can travel with the project. Remove sensitive data before compilation.
 
-The build temporarily holds the R snapshot, JSON and encoded data. Choose a suitable grain for memory and import performance; no benchmark from 0.1.0 is reused as a claim about 0.3.1. Font family names are references to installed fonts, not embedded font files. “Accessible” is a theme preset, not an accessibility certification; inspect contrast, alternative text, reading order and keyboard behavior in the target viewer.
+The build temporarily holds the R snapshot, JSON and encoded data. Choose a suitable grain for memory and import performance; no benchmark from 0.1.0 is reused as a claim about 0.4.0. Font family names are references to installed fonts, not embedded font files. “Accessible” is a theme preset, not an accessibility certification; inspect contrast, alternative text, reading order and keyboard behavior in the target viewer.
 
 ## Development and acceptance
 
@@ -988,15 +1023,15 @@ The build temporarily holds the R snapshot, JSON and encoded data. Choose a suit
 python tools/check-static.py
 python tools/test_static.py
 R CMD build .
-R CMD check --no-manual pbiweave_0.3.1.tar.gz
-R CMD INSTALL pbiweave_0.3.1.tar.gz
+R CMD check --no-manual pbiweave_0.4.0.tar.gz
+R CMD INSTALL pbiweave_0.4.0.tar.gz
 Rscript tools/run-acceptance.R --flights
 python tools/validate_project.py build/examples build/tutorials --json
 ```
 
 The runner compiles all 17 built-in examples in both formats, runs installed help examples, verifies exported-function coverage, and optionally runs both flight tutorials. CI supplies Windows/Ubuntu package checks plus offline schema validation. `tools/validate-tmdl.ps1` can invoke an explicitly supplied trusted Microsoft TOM assembly and compare TMDL with the same model compiled to TMSL. Passing that parse/metadata comparison still does not run M, DAX or the Desktop renderer.
 
-For the showcase, the all-data expected totals are revenue **929,888.00**, cost **576,336.64**, gross profit **353,551.36**, units **18,368**, and gross margin approximately **38.020854%**. The original deterministic fixture is unchanged. Test totals and selections after refresh and save/reopen before publication. [VALIDATION.md](VALIDATION.md) separates completed source checks from these native acceptance gates.
+For the showcase, the all-data expected totals are revenue **929,888.00**, cost **576,336.64**, gross profit **353,551.36**, units **18,368**, and gross margin approximately **38.020854%**. The original deterministic fixture is unchanged. Test totals and selections after refresh and save/reopen before publication. [VALIDATION.md](inst/doc/VALIDATION.md) separates completed source checks from these native acceptance gates.
 
 ## Format and dependency references
 

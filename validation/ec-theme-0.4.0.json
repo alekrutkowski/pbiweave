@@ -1,0 +1,51 @@
+{
+  "package": "pbiweave",
+  "version": "0.4.0",
+  "verified_on": "2026-10-23",
+  "scope": "European Commission theme addition and preservation of existing preset defaults",
+  "focused_R_tests": {
+    "runtime": "webR 0.6.0 / R 4.6.0 (2026-04-24)",
+    "test_cases": 6,
+    "expectations_passed": 103,
+    "failed": 0,
+    "skipped": 0,
+    "warnings": 0,
+    "execution": "source functions loaded and run in WebAssembly"
+  },
+  "python_tool_tests": {
+    "tests": 14,
+    "failures": 0,
+    "errors": 0
+  },
+  "standalone_theme_schema": {
+    "schema_version": "Power BI Desktop 2.159 / exploration 5.78",
+    "passed": true
+  },
+  "generated_projects": {
+    "model_formats": [
+      "tmdl",
+      "tmsl"
+    ],
+    "pages_each": 2,
+    "visuals_each_including_page_headings": 9,
+    "schema_validated_files_each": 18,
+    "structural_checks_and_manifest_hashes": true
+  },
+  "platform_acceptance": {
+    "native_R_CMD_check": false,
+    "full_R_regression_suite": false,
+    "Microsoft_TOM": false,
+    "Power_BI_Desktop_rendered": false,
+    "M_and_DAX_evaluated": false
+  },
+  "source_sha256": {
+    "DESCRIPTION": "dd1f248a53508291654c088d1791f16c94b31ba5841675e63945c677a132b1a7",
+    "R/spec.R": "781843bb8a030e4bc8531984e99ecf9d2f3cd98fa3feb3e3ebb7205dcbf1701c",
+    "R/report.R": "ad2f2576de1f385fb2c2c0a2c33082bfa0b91a0e3b185631d4d2497613a1d08e",
+    "R/compile.R": "660ae0d21ac34bfde1fcf451eb124b2576eb686fe6dadbfc0664d46b7cff5e6d",
+    "tests/testthat/test-theme-european-commission.R": "73c4db788cf0855c4a9a32f3251b685e54d766a00f938bbdfe502fe959a235a8",
+    "inst/examples/03-european-commission.R": "0819ee974a5425dfa804e7563165df3f79d5d6591d4b0e0f9641e48462065f77",
+    "inst/themes/european-commission.json": "2db90eb371ae85c5d10fd0e34fd6274b15cfe5d0977448200fd0ea334084b959",
+    "inst/schemas/theme-schema.json": "c45b38456a9c14426fdbf5f6c9fff582483bae89d5c9047e38969abce1ba9722"
+  }
+}

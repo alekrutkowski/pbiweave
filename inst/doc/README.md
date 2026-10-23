@@ -1,4 +1,4 @@
-# pbiweave 0.3.1
+# pbiweave 0.4.0
 
 **Prepare data in R. Declare a report. Compile portable native Power BI source.**
 
@@ -8,28 +8,28 @@
 >
 > `pbi_check(project)$valid` means structural checks passed. **It does not mean data are loaded, TMDL was accepted by Microsoft's engine, or the report rendered successfully.** The package prints this reminder and writes `FIRST-OPEN.md` into every compiled project.
 
-This release consolidates the supplied 0.1.0 implementation and 0.2.0 additions. It retains **all 40 original exports**, adds the **10 newer exports**, restores the original compatibility and correctness safeguards, and defaults to **TMDL**. Both serializers use one validated model representation. Explicit `model_format = "tmsl"` retains `model.bim` output.
+The 0.3.0 consolidation combined the supplied 0.1.0 implementation and 0.2.0 additions. Version 0.4.0 retains **all 40 original exports** and the **10 newer exports**, the restored compatibility and correctness safeguards, and the **TMDL** default. Both serializers use one validated model representation. Explicit `model_format = "tmsl"` retains `model.bim` output.
 
-**Acceptance status:** this delivery includes implementation, regression tests and reproducible acceptance tools. Executed static checks and source-provenance checks are listed in [VALIDATION.md](VALIDATION.md). A new R test/check run, Microsoft TOM parse, Power BI refresh/render and publication pass are **not claimed**. Keep your accepted 0.1.0 projects and generate into a new directory until acceptance is complete.
+**Acceptance status:** executed checks and their scope are recorded in [VALIDATION.md](VALIDATION.md). Structural checks do not establish Microsoft TOM parsing, Power BI refresh/render or publication acceptance. Generate into a new directory and review the report in Desktop before replacing an accepted project.
 
 ## Windows compilation fix in 0.3.1
 
 If 0.3.0 reported `Project path escapes the project: .gitignore`, upgrade to
-0.3.1. The filename `.gitignore` belongs inside each generated project; it
+0.3.1 or later. The filename `.gitignore` belongs inside each generated project; it
 must not be rejected. This was a path-validation bug, **not** a Power BI or
 model-data error. Running with `bundle = FALSE` would not have prevented the
 error because project verification occurs before ZIP creation. The new path
 checker inspects the canonical parent directory, rather than treating
 Windows differences in normalized *file* paths as escapes.
 
-Install the 0.3.1 archive from a fresh R session and rerun the same expression
+Install the current archive from a fresh R session and rerun the same expression
 using a new output directory (or `overwrite = TRUE` when explicitly replacing
 an existing pbiweave project). The first-open **Home ➜ Refresh** requirement
 has not changed.
 
 ## Start here
 
-[Beginner flights tutorial](#beginner-tutorial-one-data-frame-to-a-two-page-report) · [Three-data-frame tutorial](#intermediate-tutorial-three-data-frames-and-an-r-preaggregated-model) · [Sixteen original examples](#sixteen-pedagogical-examples) · [Every-function index](#every-public-function) · [Shiny guide](pbiweave-for-shiny-developers.md) · [Reference](REFERENCE.md) · [Migration](MIGRATION.md) · [Consolidation audit map](CONSOLIDATION.md).
+[Beginner flights tutorial](#beginner-tutorial-one-data-frame-to-a-two-page-report) · [Three-data-frame tutorial](#intermediate-tutorial-three-data-frames-and-an-r-preaggregated-model) · [Sixteen original examples](#sixteen-pedagogical-examples) · [Every-function index](#every-public-function) · [Shiny guide](pbiweave-for-shiny-developers.md) · [Reference](REFERENCE.md) · [Migration](MIGRATION.md) · [Consolidation audit map](CONSOLIDATION.md) · [European Commission theme](EUROPEAN-COMMISSION-THEME.md).
 
 ## Install
 
@@ -37,12 +37,45 @@ R 4.1 or newer is required. R-side preparation and compilation target Windows an
 
 ```r
 install.packages(c("data.table", "jsonlite", "base64enc", "magrittr", "digest", "zip"))
-install.packages("pbiweave_0.3.1.tar.gz", repos = NULL, type = "source")
+install.packages("pbiweave_0.4.0.tar.gz", repos = NULL, type = "source")
 library(pbiweave)
 library(data.table)
 ```
 
 For the two full tutorials also install `nycflights13`; `bit64` is optional for its native large-integer vectors. Neither is a runtime dependency of a compiled report. Use the separate-library procedure in [MIGRATION.md](MIGRATION.md) to keep an older installed version unchanged.
+
+## European Commission theme in 0.4.0
+
+Select `theme = "european_commission"` to combine the supplied European Commission
+PowerPoint template's blue titles, Arial typeface and six accent colors with the
+current EC website's light blue canvas, dark text and bright blue highlights.
+The other six presets keep their existing colors and font defaults.
+
+```r
+library(pbiweave)
+
+project <- pbi_example("showcase", theme = "european_commission") %>%
+  pbi_compile("commission-showcase-v040", bundle = TRUE)
+
+# A theme object also works in pbi_dashboard() or pbi_example().
+ec <- pbi_theme("european_commission", title_size = 17)
+report <- pbi_dashboard("Programme overview", pbi_demo_data(), theme = ec) %>%
+  pbi_page("Overview", pbi_bar("region", "revenue", title = "Revenue by region"))
+```
+
+The preset uses template blue `#003399` for titles and the first series, then
+`#44BA7E`, `#FF712C`, `#48038C`, `#FFD34E`, `#DD0C86` and `#000083`. Arial is the
+default only when `font` is omitted; explicit font choices remain effective.
+`title_color` is a new optional argument at the end of `pbi_theme()`.
+
+See the [design choices, source colors and customization examples](EUROPEAN-COMMISSION-THEME.md)
+and the installed script
+`system.file("examples", "03-european-commission.R", package = "pbiweave")`.
+A standalone JSON theme is bundled at
+`system.file("themes", "european-commission.json", package = "pbiweave")` for
+importing its palette, typography and semantic defaults into existing reports.
+This is an independent adaptation with no official Commission affiliation.
+Open the generated project in Power BI Desktop and select **Home ➜ Refresh**.
 
 ## The complete first workflow
 
@@ -51,7 +84,7 @@ library(pbiweave)
 library(data.table)
 
 project <- pbi_example("showcase", theme = "midnight") %>%
-  pbi_compile("commercial-dashboard-v031", bundle = TRUE)
+  pbi_compile("commercial-dashboard-v040", bundle = TRUE)
 
 check <- pbi_check(project, verify_hashes = TRUE)
 stopifnot(check$valid)
@@ -195,7 +228,7 @@ Check the synchronized date, carrier and origin choices on both pages. A table v
 
 ### 4. Change the report in R
 
-Change `theme = "midnight"` to `"linen"`, `"ocean"`, `"forest"`, `"ink"` or `"accessible"`; change titles, layout columns or visible fields; or compute another feature before constructing the dashboard. Recompile to a new directory and reopen Desktop. An already open project does not live-reload external edits. No source data have been fetched by the generated report: its refresh rereads the embedded snapshot.
+Change `theme = "midnight"` to `"linen"`, `"ocean"`, `"forest"`, `"ink"`, `"accessible"` or `"european_commission"`; change titles, layout columns or visible fields; or compute another feature before constructing the dashboard. Recompile to a new directory and reopen Desktop. An already open project does not live-reload external edits. No source data have been fetched by the generated report: its refresh rereads the embedded snapshot.
 
 ## Intermediate tutorial: three data frames and an R-preaggregated model
 
@@ -321,7 +354,7 @@ Compare the all-data totals with `expected`, then compare a selected carrier/des
 
 Native visual families include bar/column, line, area, scatter/bubble, pie, donut, treemap, funnel, waterfall, modern multi-value card, gauge, table, matrix, slicer and static text. Grid spans, first-visual or all-slicer sidebars, focus compositions and free coordinates are supported. Wide, standard, portrait, A4-proportioned and custom canvases are fixed layouts, not automatic mobile reflow.
 
-The six coordinated themes retain separate base/title text sizes, foreground/background/accent/muted controls, categorical colors and explicit visual/table formatting. Alternative text, hidden pages, optional heading bands, per-page backgrounds, typed static filters, synchronized slicers, full calendars and structured diagnostics are retained from 0.1.0.
+The seven coordinated themes retain separate base/title text sizes, foreground/background/accent/muted controls, categorical colors and explicit visual/table formatting. Alternative text, hidden pages, optional heading bands, per-page backgrounds, typed static filters, synchronized slicers, full calendars and structured diagnostics are retained from 0.1.0.
 
 ## Sixteen pedagogical examples
 
@@ -372,7 +405,7 @@ dashboard <- pbi_dashboard("Typed data") %>% pbi_data("Visits", visits, types = 
 
 Fixed-decimal currency has four fractional digits in the Power BI model. Supply exact decimal strings when binary floating-point conversion would be undesirable; choose a numeric double column when your values require a different scale.
 
-### 3. Six coordinated themes
+### 3. Seven coordinated themes
 
 **Example ID:** `themes`
 
@@ -385,10 +418,11 @@ dashboard <- pbi_dashboard("A consistent visual language", pbi_demo_data(), them
         title = "Regional trends"), pbi_card("units", title = "Units sold"))
 ```
 
-Build the same report in all six presets:
+Build the same report in all seven presets:
 
 ```r
-theme_names <- c("linen", "midnight", "ocean", "forest", "ink", "accessible")
+theme_names <- c("linen", "midnight", "ocean", "forest", "ink", "accessible",
+                 "european_commission")
 theme_reports <- setNames(lapply(theme_names, function(name) {
   pbi_example("themes", theme = name)
 }), theme_names)
@@ -823,7 +857,7 @@ A text tooltip is a text grouping field, not an implicit count. Explicit `pbi_fi
 
 Arbitrary DAX is accepted but not evaluated in R. This package does not implement R visual callbacks, custom `.pbiviz` loading, maps, bookmarks, drillthrough, conditional formatting, RLS administration, DirectQuery/Direct Lake, mobile-layout authoring, credentials or Service publishing. Hidden fields, disabled interactions and static filters are **not security**; every embedded row can travel with the project. Remove sensitive data before compilation.
 
-The build temporarily holds the R snapshot, JSON and encoded data. Choose a suitable grain for memory and import performance; no benchmark from 0.1.0 is reused as a claim about 0.3.1. Font family names are references to installed fonts, not embedded font files. “Accessible” is a theme preset, not an accessibility certification; inspect contrast, alternative text, reading order and keyboard behavior in the target viewer.
+The build temporarily holds the R snapshot, JSON and encoded data. Choose a suitable grain for memory and import performance; no benchmark from 0.1.0 is reused as a claim about 0.4.0. Font family names are references to installed fonts, not embedded font files. “Accessible” is a theme preset, not an accessibility certification; inspect contrast, alternative text, reading order and keyboard behavior in the target viewer.
 
 ## Development and acceptance
 
@@ -832,8 +866,8 @@ The build temporarily holds the R snapshot, JSON and encoded data. Choose a suit
 python tools/check-static.py
 python tools/test_static.py
 R CMD build .
-R CMD check --no-manual pbiweave_0.3.1.tar.gz
-R CMD INSTALL pbiweave_0.3.1.tar.gz
+R CMD check --no-manual pbiweave_0.4.0.tar.gz
+R CMD INSTALL pbiweave_0.4.0.tar.gz
 Rscript tools/run-acceptance.R --flights
 python tools/validate_project.py build/examples build/tutorials --json
 ```
@@ -846,7 +880,7 @@ For the showcase, the all-data expected totals are revenue **929,888.00**, cost 
 
 [Microsoft project format](https://learn.microsoft.com/en-us/power-bi/developer/projects/projects-overview), [semantic model and cache](https://learn.microsoft.com/en-us/power-bi/developer/projects/projects-dataset), [TMDL grammar and native serializer](https://learn.microsoft.com/en-us/analysis-services/tmdl/tmdl-overview), [PBIR report definitions](https://learn.microsoft.com/en-us/power-bi/developer/projects/projects-report), [native data types](https://learn.microsoft.com/en-us/power-bi/connect-data/desktop-data-types), [relationships](https://learn.microsoft.com/en-us/power-bi/transform-model/desktop-relationships-understand), [nycflights13 datasets](https://nycflights13.tidyverse.org/reference/flights.html), [Shiny reactive elements](https://shiny.posit.co/r/getstarted/build-an-app/reactivity-essentials/reactive-elements.html).
 
-The exact pinned schema/profile is in [inst/COMPATIBILITY.md](inst/COMPATIBILITY.md). Dependency and schema attribution is in [inst/ACKNOWLEDGEMENTS.md](inst/ACKNOWLEDGEMENTS.md); the bundled Microsoft schemas retain their license. The compiler never silently adopts a newly downloaded schema during a user build.
+The exact pinned schema/profile is in [inst/COMPATIBILITY.md](../COMPATIBILITY.md). Dependency and schema attribution is in [inst/ACKNOWLEDGEMENTS.md](../ACKNOWLEDGEMENTS.md); the bundled Microsoft schemas retain their license. The compiler never silently adopts a newly downloaded schema during a user build.
 
 ## License
 
